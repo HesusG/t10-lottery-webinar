@@ -445,10 +445,11 @@ body {
 }
 
 .data-row {
-    position: absolute;
-    /* Virtual positioning */
+    position: relative;
+    /* Fixed: Was absolute causing collapse */
     width: 100%;
-    height: 48px;
+    min-height: 48px;
+    /* Use min-height to be safe */
     /* Fixed row height preference */
     display: flex;
     align-items: center;
