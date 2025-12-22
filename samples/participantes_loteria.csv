@@ -1,0 +1,56 @@
+ID,Nombre,Correo,Departamento
+1,Ana García,ana.garcia@example.com,Ingeniería
+2,Carlos López,carlos.lopez@example.com,Diseño
+3,María Rodríguez,maria.rodriguez@example.com,Producto
+4,Juan Martínez,juan.martinez@example.com,Marketing
+5,Sofía Hernández,sofia.hernandez@example.com,Ventas
+6,Luis González,luis.gonzalez@example.com,Recursos Humanos
+7,Valentina Pérez,valentina.perez@example.com,Ingeniería
+8,Diego Sánchez,diego.sanchez@example.com,Diseño
+9,Camila Ramírez,camila.ramirez@example.com,Producto
+10,Mateo Torres,mateo.torres@example.com,Marketing
+11,Lucía Flores,lucia.flores@example.com,Ventas
+12,Gabriel Rivera,gabriel.rivera@example.com,Finanzas
+13,Isabella Gómez,isabella.gomez@example.com,Legal
+14,Daniel Díaz,daniel.diaz@example.com,Ingeniería
+15,Fernanda Cruz,fernanda.cruz@example.com,Diseño
+16,Alejandro Ruiz,alejandro.ruiz@example.com,Producto
+17,Valeria Reyes,valeria.reyes@example.com,Marketing
+18,Javier Morales,javier.morales@example.com,Ventas
+19,Ximena Ortiz,ximena.ortiz@example.com,Recursos Humanos
+20,Santiago Castillo,santiago.castillo@example.com,Ingeniería
+21,Victoria Gutiérrez,victoria.gutierrez@example.com,Diseño
+22,Andrés Castro,andres.castro@example.com,Producto
+23,Gabriela Vargas,gabriela.vargas@example.com,Marketing
+24,Sebastián Ramos,sebastian.ramos@example.com,Ventas
+25,Natalia Medina,natalia.medina@example.com,Finanzas
+26,Emilio Herrera,emilio.herrera@example.com,Legal
+27,Daniela Romero,daniela.romero@example.com,Ingeniería
+28,Adrián Silva,adrian.silva@example.com,Diseño
+29,Martina Aguilar,martina.aguilar@example.com,Producto
+30,Julián Mendoza,julian.mendoza@example.com,Marketing
+31,Renata Escobar,renata.escobar@example.com,Ventas
+32,Felipe Jiménez,felipe.jimenez@example.com,Recursos Humanos
+33,Antonella Peña,antonella.pena@example.com,Ingeniería
+34,Leonardo Navarro,leonardo.navarro@example.com,Diseño
+35,Paula Miranda,paula.miranda@example.com,Producto
+36,Tomás Rojas,tomas.rojas@example.com,Marketing
+37,Mariana Molina,mariana.molina@example.com,Ventas
+38,Lucas Salazar,lucas.salazar@example.com,Finanzas
+39,Emilia Acosta,emilia.acosta@example.com,Legal
+40,Miguel Delgado,miguel.delgado@example.com,Ingeniería
+41,Catalina Cabrera,catalina.cabrera@example.com,Diseño
+42,Francisco Pacheco,francisco.pacheco@example.com,Producto
+43,Julia Bustamante,julia.bustamante@example.com,Marketing
+44,Agustín Fuentes,agustin.fuentes@example.com,Ventas
+45,Bianca Sandoval,bianca.sandoval@example.com,Recursos Humanos
+46,Maximiliano Guerrero,maximiliano.guerrero@example.com,Ingeniería
+47,Olivia Espinoza,olivia.espinoza@example.com,Diseño
+48,Ricardo Cárdenas,ricardo.cardenas@example.com,Producto
+49,Elena Vega,elena.vega@example.com,Marketing
+50,Simón Soto,simon.soto@example.com,Ventas
+51,Alma Contreras,alma.contreras@example.com,Finanzas
+52,Pedro Rivas,pedro.rivas@example.com,Legal
+53,Lorena Serrano,lorena.serrano@example.com,Ingeniería
+54,Hugo Campos,hugo.campos@example.com,Diseño
+55,Clara Montes,clara.montes@example.com,Producto

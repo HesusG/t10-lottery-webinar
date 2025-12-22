@@ -1,31 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TripleTen Random Selector</title>
+    <title>Lotería TripleTen</title>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+
     <!-- External Libs -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fireworks-js@2.10.7/dist/index.umd.js"></script>
-    
+
     <!-- Styles -->
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <div id="app" class="app-container">
         <!-- Left Pane: Wheel -->
         <div id="pane-wheel" class="pane wheel-pane">
             <div class="wheel-header">
-                <div class="logo">T10 SELECTOR</div>
-                <div class="wheel-status">Ready to spin</div>
+                <div class="logo">LOTERÍA T10</div>
+                <div class="wheel-status">Listo para sortear</div>
             </div>
-            
+
             <div class="wheel-stage">
                 <div class="wheel-container">
                     <div class="wheel-overlay-top"></div>
@@ -39,7 +43,7 @@
 
             <div class="wheel-controls">
                 <button id="btn-spin" class="btn btn-primary btn-xl" disabled>
-                    SPIN WHEEL
+                    ¡SORTEAR!
                 </button>
             </div>
         </div>
@@ -48,12 +52,12 @@
         <div id="pane-data" class="pane data-pane">
             <div class="pane-header">
                 <div class="tab-controls">
-                    <button class="tab-btn active" data-tab="table">Participants</button>
-                    <button class="tab-btn" data-tab="settings">Settings</button>
+                    <button class="tab-btn active" data-tab="table">Participantes</button>
+                    <button class="tab-btn" data-tab="settings">Configuración</button>
                 </div>
                 <div class="file-controls">
                     <label for="file-upload" class="btn btn-sm btn-outline">
-                        Import CSV/XLSX
+                        Importar CSV/XLSX
                     </label>
                     <input type="file" id="file-upload" accept=".csv, .xlsx, .xls" hidden>
                 </div>
@@ -63,24 +67,25 @@
                 <!-- Data Tab -->
                 <div id="tab-table" class="tab-content active">
                     <div id="empty-state" class="empty-state">
-                        <h3>No Data Loaded</h3>
-                        <p>Upload a CSV or Excel file to get started.</p>
-                        <button class="btn btn-secondary" onclick="document.getElementById('file-upload').click()">Upload File</button>
+                        <h3>Sin Datos</h3>
+                        <p>Carga un archivo CSV o Excel para comenzar.</p>
+                        <button class="btn btn-secondary"
+                            onclick="document.getElementById('file-upload').click()">Cargar Archivo</button>
                         <div class="recent-files" id="recent-files" style="display:none; margin-top: 1rem;">
-                            <small>Or resume:</small>
-                            <button id="btn-resume" class="btn btn-link">Resume previous session</button>
+                            <small>O continuar:</small>
+                            <button id="btn-resume" class="btn btn-link">Reanudar sesión anterior</button>
                         </div>
                     </div>
-                    
+
                     <div id="table-container" class="table-container" style="display: none;">
                         <div class="table-toolbar">
-                            <span id="row-count" class="badge">0 rows</span>
+                            <span id="row-count" class="badge">0 filas</span>
                             <div class="search-box">
-                                <label for="display-col-select" class="text-xs">Display Col:</label>
+                                <label for="display-col-select" class="text-xs">Columna:</label>
                                 <select id="display-col-select" class="input-sm"></select>
                             </div>
                             <label class="toggle-label text-xs">
-                                <input type="checkbox" id="chk-header" checked> Header Row
+                                <input type="checkbox" id="chk-header" checked> Encabezado
                             </label>
                         </div>
                         <div class="table-wrapper">
@@ -96,15 +101,15 @@
                 <!-- Settings Tab -->
                 <div id="tab-settings" class="tab-content">
                     <div class="settings-group">
-                        <h4>Appearance</h4>
+                        <h4>Apariencia</h4>
                         <div class="form-row">
-                            <label>Theme</label>
+                            <label>Tema</label>
                             <select id="setting-theme" class="input-block">
                                 <!-- Populated by JS -->
                             </select>
                         </div>
                         <div class="form-row">
-                            <label>Layout Split</label>
+                            <label>Diseño</label>
                             <div class="btn-group">
                                 <button class="btn-group-item" data-split="50-50">50/50</button>
                                 <button class="btn-group-item" data-split="60-40">60/40</button>
@@ -112,7 +117,7 @@
                             </div>
                         </div>
                         <div class="form-row">
-                            <label>Tab Orientation</label>
+                            <label>Orientación</label>
                             <div class="btn-group">
                                 <button class="btn-group-item" data-orient="horizontal">Horizontal</button>
                                 <button class="btn-group-item" data-orient="vertical">Vertical</button>
@@ -121,36 +126,37 @@
                     </div>
 
                     <div class="settings-group">
-                        <h4>Animation</h4>
+                        <h4>Animación</h4>
                         <div class="form-row">
-                            <label>Spin Duration (s)</label>
+                            <label>Duración Giro (s)</label>
                             <input type="number" id="setting-duration" value="10" min="5" max="60" class="input-block">
                         </div>
-                         <div class="form-row">
-                            <label>Celebration Duration (s)</label>
-                            <input type="number" id="setting-celebration" value="20" min="5" max="60" class="input-block">
+                        <div class="form-row">
+                            <label>Duración Festejo (s)</label>
+                            <input type="number" id="setting-celebration" value="20" min="5" max="60"
+                                class="input-block">
                         </div>
                     </div>
 
                     <div class="settings-group">
                         <label class="toggle-label">
-                            <input type="checkbox" id="chk-advanced"> Show Advanced Controls
+                            <input type="checkbox" id="chk-advanced"> Mostrar controles avanzados
                         </label>
-                        
+
                         <div id="advanced-controls" class="advanced-controls hidden">
                             <div class="form-row warning-box">
-                                <label>Rig the Winner (Debug)</label>
-                                <input type="number" id="setting-rigged-row" placeholder="Row #" class="input-block">
-                                <small>Forces the wheel to stop on this row number.</small>
+                                <label>Rig Winner (Debug)</label>
+                                <input type="number" id="setting-rigged-row" placeholder="Fila #" class="input-block">
+                                <small>Fuerza al sorteo a parar en esta fila.</small>
                             </div>
                             <div class="form-row">
-                                <button id="btn-clear-data" class="btn btn-danger btn-sm">Clear All Data</button>
+                                <button id="btn-clear-data" class="btn btn-danger btn-sm">Borrar Datos</button>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="settings-group">
-                        <h4>History</h4>
+                        <h4>Historial</h4>
                         <ul id="history-list" class="history-list">
                             <!-- Populated by JS -->
                         </ul>
@@ -164,15 +170,16 @@
     <div id="celebration-overlay" class="celebration-overlay hidden">
         <canvas id="fireworks-canvas"></canvas>
         <div class="celebration-content">
-            <h1 class="celebration-title">WINNER!</h1>
+            <h1 class="celebration-title">¡GANADOR!</h1>
             <div class="winner-display">
                 <div class="winner-number" id="winner-number">#00</div>
-                <div class="winner-name" id="winner-name">Name Placeholder</div>
+                <div class="winner-name" id="winner-name">Nombre</div>
             </div>
-            <button id="btn-skip-celebration" class="btn btn-outline btn-white">Skip Celebration (Esc)</button>
+            <button id="btn-skip-celebration" class="btn btn-outline btn-white">Saltar (Esc)</button>
         </div>
     </div>
 
     <script type="module" src="app.js"></script>
 </body>
+
 </html>
