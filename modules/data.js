@@ -10,7 +10,7 @@ export default class DataHandler {
             reader.onload = (e) => {
                 const data = new Uint8Array(e.target.result);
                 try {
-                    const workbook = XLSX.read(data, { type: 'array' });
+                    const workbook = XLSX.read(data, { type: 'array', codepage: 65001 });
                     const firstSheetName = workbook.SheetNames[0];
                     const worksheet = workbook.Sheets[firstSheetName];
                     // Get raw array of arrays
