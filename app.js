@@ -62,6 +62,12 @@ class App {
             if (e.key === 'Escape') this.celebration.stop();
         });
 
+        // Checkbox: External RNG
+        document.getElementById('chk-external-rng').addEventListener('change', (e) => {
+            const isEnabled = e.target.checked;
+            this.toggleRngMode(isEnabled);
+        });
+
         // Settings Changes
         this.ui.on('settingChange', (key, value) => {
             const current = this.store.getSettings();
@@ -89,6 +95,18 @@ class App {
                  this.wheel.initWheel(processed.rows.length);
              }
         });
+    }
+
+    toggleRngMode(enabled) {
+        const wheelPane = document.getElementById('pane-wheel');
+        const rngDisplay = document.getElementById('rng-display');
+        
+        if (enabled) {
+            wheelPane.classList.add('split-mode');
+            // Slight delay to allow CSS transition if needed
+        } else {
+            wheelPane.classList.remove('split-mode');
+        }
     }
 
     async handleFileUpload(file) {
@@ -123,7 +141,7 @@ class App {
         this.ui.hideEmptyState();
     }
 
-    startSpinSequence() {
+    async startSpinSequence() {
         const rows = this.store.getDataset().rows;
         if (!rows || rows.length === 0) return;
 
@@ -131,36 +149,76 @@ class App {
         const settings = this.store.getSettings();
         let winningIndex; // 0-based index in the 'rows' array
         
-        // Rigged mode check
-        if (settings.riggedRow && settings.riggedRow > 0 && settings.riggedRow <= rows.length) {
-            winningIndex = settings.riggedRow - 1; // Convert 1-based row # to 0-based index
-            console.log('Rigged winner:', winningIndex + 1);
+        // Check for External RNG
+        const useExternalRng = document.getElementById('chk-external-rng').checked;
+        
+        this.ui.setSpinningState(true);
+
+        if (useExternalRng) {
+            // -- EXTERNAL MODE --
+            const rngStatus = document.getElementById('rng-status');
+            const rngValue = document.getElementById('rng-value');
+            
+            rngStatus.innerText = "CONECTANDO A RANDOM.ORG...";
+            rngValue.innerText = "???";
+            rngValue.classList.remove('revealed');
+
+            try {
+                // Fetch random number 1 to N
+                const response = await fetch(`https://www.random.org/integers/?num=1&min=1&max=${rows.length}&col=1&base=10&format=plain&rnd=new`);
+                if (!response.ok) throw new Error('API Error');
+                const text = await response.text();
+                const num = parseInt(text.trim(), 10);
+                
+                if (isNaN(num)) throw new Error('Invalid Number');
+                
+                winningIndex = num - 1; // 1-based API -> 0-based index
+                rngStatus.innerText = "DATO RECIBIDO (OCULTO)";
+                
+            } catch (err) {
+                console.error("RNG Error, falling back to local:", err);
+                rngStatus.innerText = "ERROR - LOCAL FALLBACK";
+                winningIndex = Math.floor(Math.random() * rows.length);
+            }
+
         } else {
-            winningIndex = Math.floor(Math.random() * rows.length);
+            // -- LOCAL MODE --
+            // Rigged mode check
+            if (settings.riggedRow && settings.riggedRow > 0 && settings.riggedRow <= rows.length) {
+                winningIndex = settings.riggedRow - 1; // Convert 1-based row # to 0-based index
+                console.log('Rigged winner:', winningIndex + 1);
+            } else {
+                winningIndex = Math.floor(Math.random() * rows.length);
+            }
         }
 
         const winningRow = rows[winningIndex];
-        // Note: Winning ROW NUMBER is winningIndex + 1 (if 1-based)
-        // But the Wheel displays 1..N. so target is winningIndex + 1.
         const targetNumber = winningIndex + 1;
-
-        // 2. Lock UI
-        this.ui.setSpinningState(true);
 
         // 3. Spin Wheel
         this.wheel.spinTo(targetNumber, settings.animationDuration, settings.slowdownDuration).then(() => {
-            // 4. Celebration
+            // 4. Reveal RNG if needed
+            if (useExternalRng) {
+                const rngValue = document.getElementById('rng-value');
+                const rngStatus = document.getElementById('rng-status');
+                rngValue.innerText = targetNumber;
+                rngValue.classList.add('revealed');
+                rngStatus.innerText = "CONFIRMADO";
+            }
+
+            // 5. Celebration
             this.ui.setSpinningState(false);
             this.celebration.start(winningRow, targetNumber, settings.celebrationDuration);
             
-            // 5. Update Table & History
+            // 6. Update Table & History
             this.ui.scrollToRow(targetNumber);
             this.ui.highlightWinner(targetNumber);
             this.store.addHistory({
                 rowNumber: targetNumber,
                 timestamp: new Date().toISOString(),
                 winnerData: winningRow,
-                datasetName: this.store.getDataset().meta.filename
+                datasetName: this.store.getDataset().meta.filename,
+                source: useExternalRng ? 'Random.org' : 'Local RNG'
             });
             this.ui.updateHistoryList(); // Refresh history UI
         });

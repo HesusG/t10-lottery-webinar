@@ -46,6 +46,13 @@
                     ¡SORTEAR!
                 </button>
             </div>
+
+            <!-- RNG Display (Initially Hidden via CSS) -->
+            <div id="rng-display" class="rng-display-pane">
+                <div class="rng-status" id="rng-status">EN ESPERA</div>
+                <div class="rng-value" id="rng-value">???</div>
+                <div class="rng-source">VERIFICADO POR RANDOM.ORG</div>
+            </div>
         </div>
 
         <!-- Right Pane: Data Table & Settings -->
@@ -100,6 +107,16 @@
 
                 <!-- Settings Tab -->
                 <div id="tab-settings" class="tab-content">
+                    <div class="settings-group">
+                        <h4>Fuente de Datos</h4>
+                        <label class="toggle-label">
+                            <input type="checkbox" id="chk-external-rng"> Usar Random.org (Externo)
+                        </label>
+                        <small style="display:block; margin-top:0.4rem; color:var(--muted);">
+                            Divide la pantalla y muestra el número real obtenido de Random.org.
+                        </small>
+                    </div>
+
                     <div class="settings-group">
                         <h4>Apariencia</h4>
                         <div class="form-row">

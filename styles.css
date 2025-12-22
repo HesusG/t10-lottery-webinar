@@ -98,6 +98,71 @@ body {
     z-index: 20;
 }
 
+/* Split Mode Modifications */
+.pane.wheel-pane.split-mode {
+    flex-direction: column;
+}
+
+.pane.wheel-pane.split-mode .wheel-stage {
+    height: 50%;
+    border-bottom: 1px solid var(--border);
+}
+
+.pane.wheel-pane.split-mode .wheel-controls {
+    bottom: auto;
+    top: 42%; /* Position near the middle split */
+    transform: translateY(-50%) scale(0.8);
+}
+
+/* RNG Display (Bottom Half) */
+.rng-display-pane {
+    height: 0; /* Default hidden */
+    width: 100%;
+    background: #000;
+    color: #0f0; /* Terminal Green */
+    font-family: var(--font-mono);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: height 0.3s ease;
+    border-top: 1px solid var(--border);
+}
+
+.pane.wheel-pane.split-mode .rng-display-pane {
+    height: 50%;
+}
+
+.rng-status {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+}
+
+.rng-value {
+    font-size: 4rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    filter: blur(10px); /* Default blurred/hidden */
+    transition: filter 0.5s ease;
+}
+
+.rng-value.revealed {
+    filter: blur(0);
+}
+
+.rng-source {
+    margin-top: 1rem;
+    font-size: 0.7rem;
+    opacity: 0.5;
+    border: 1px solid #333;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
 /* 3D Wheel Implementation */
 .wheel-stage {
     height: 60vh;
