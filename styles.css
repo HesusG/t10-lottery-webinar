@@ -13,7 +13,7 @@
     --danger: #D64545;
     --success: #1F9D6E;
     --focus: #F47C57;
-    
+
     /* Layout */
     --font-main: 'Inter', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
@@ -23,7 +23,9 @@
     --spacing-unit: 1rem;
 }
 
-* { box-sizing: border-box; }
+* {
+    box-sizing: border-box;
+}
 
 body {
     margin: 0;
@@ -31,7 +33,8 @@ body {
     font-family: var(--font-main);
     background-color: var(--bg);
     color: var(--text);
-    overflow: hidden; /* App-like feel */
+    overflow: hidden;
+    /* App-like feel */
     height: 100vh;
     width: 100vw;
     transition: background-color 0.3s ease, color 0.3s ease;
@@ -59,7 +62,8 @@ body {
     border-right: 1px solid var(--border);
     align-items: center;
     justify-content: center;
-    width: 50%; /* Default */
+    width: 50%;
+    /* Default */
     position: relative;
     z-index: 10;
 }
@@ -110,57 +114,136 @@ body {
 
 .pane.wheel-pane.split-mode .wheel-controls {
     bottom: auto;
-    top: 42%; /* Position near the middle split */
+    top: 42%;
+    /* Position near the middle split */
     transform: translateY(-50%) scale(0.8);
 }
 
 /* RNG Display (Bottom Half) */
 .rng-display-pane {
-    height: 0; /* Default hidden */
+    height: 0;
+    /* Default hidden */
     width: 100%;
-    background: #000;
-    color: #0f0; /* Terminal Green */
+    background: #0f172a;
+    /* Navy/Dark Blue for "Lab" feel */
+    color: #38bdf8;
+    /* Cyan for "Quantum" feel */
     font-family: var(--font-mono);
-    padding: 1rem;
+    padding: 0;
+    /* Remove padding when height is 0 */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    transition: height 0.3s ease;
-    border-top: 1px solid var(--border);
+    transition: height 0.3s ease, padding 0.3s ease;
+    border-top: 0 solid var(--border);
 }
 
 .pane.wheel-pane.split-mode .rng-display-pane {
     height: 50%;
+    padding: 2rem;
+    /* Add padding only when active */
+    border-top-width: 1px;
+    border-top-color: rgba(56, 189, 248, 0.2);
 }
 
-.rng-status {
+/* Quantum Widget Card */
+.quantum-card {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-radius: 8px;
+    padding: 1.5rem;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.1);
+    position: relative;
+}
+
+.quantum-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+    padding-bottom: 0.5rem;
+}
+
+.quantum-logo {
     font-size: 0.8rem;
-    opacity: 0.7;
-    margin-bottom: 0.5rem;
-    text-transform: uppercase;
-}
-
-.rng-value {
-    font-size: 4rem;
     font-weight: 700;
-    letter-spacing: 0.1em;
-    filter: blur(10px); /* Default blurred/hidden */
-    transition: filter 0.5s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #fff;
 }
 
-.rng-value.revealed {
+.quantum-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.7rem;
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.status-dot {
+    width: 6px;
+    height: 6px;
+    background-color: #38bdf8;
+    border-radius: 50%;
+    animation: pulse 1.5s infinite;
+}
+
+.quantum-value-container {
+    margin: 2rem 0;
+}
+
+.quantum-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: #64748b;
+    margin-bottom: 0.5rem;
+}
+
+.quantum-value {
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+    font-variant-numeric: tabular-nums;
+    filter: blur(8px);
+    transition: filter 0.8s ease-out;
+}
+
+.quantum-value.revealed {
     filter: blur(0);
 }
 
-.rng-source {
+.quantum-source-id {
+    font-size: 0.6rem;
+    color: #475569;
     margin-top: 1rem;
-    font-size: 0.7rem;
-    opacity: 0.5;
-    border: 1px solid #333;
-    padding: 2px 6px;
-    border-radius: 4px;
+    font-family: monospace;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.5);
+        opacity: 0.5;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
 /* 3D Wheel Implementation */
@@ -177,18 +260,16 @@ body {
     position: relative;
     overflow: hidden;
     /* Masking for the fade effect top/bottom */
-    mask-image: linear-gradient(to bottom, 
-        transparent 0%, 
-        black 20%, 
-        black 80%, 
-        transparent 100%
-    );
-    -webkit-mask-image: linear-gradient(to bottom, 
-        transparent 0%, 
-        black 20%, 
-        black 80%, 
-        transparent 100%
-    );
+    mask-image: linear-gradient(to bottom,
+            transparent 0%,
+            black 20%,
+            black 80%,
+            transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom,
+            transparent 0%,
+            black 20%,
+            black 80%,
+            transparent 100%);
 }
 
 .wheel-strip {
@@ -206,12 +287,13 @@ body {
     font-family: var(--font-mono);
     font-weight: 700;
     font-size: 4rem;
-    height: 120px; /* Fixed height for calculations */
+    height: 120px;
+    /* Fixed height for calculations */
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--text);
-    opacity: 0.4; 
+    opacity: 0.4;
     transform: scale(0.9);
     transition: opacity 0.2s, transform 0.2s;
 }
@@ -240,7 +322,8 @@ body {
 /* Data Pane */
 .data-pane {
     background-color: var(--panel);
-    width: 50%; /* Default */
+    width: 50%;
+    /* Default */
     display: flex;
     flex-direction: column;
 }
@@ -342,7 +425,8 @@ body {
 .table-wrapper {
     flex: 1;
     position: relative;
-    overflow: hidden; /* For virtual scroll container */
+    overflow: hidden;
+    /* For virtual scroll container */
     background: var(--panel);
 }
 
@@ -359,9 +443,11 @@ body {
 }
 
 .data-row {
-    position: absolute; /* Virtual positioning */
+    position: absolute;
+    /* Virtual positioning */
     width: 100%;
-    height: 48px; /* Fixed row height preference */
+    height: 48px;
+    /* Fixed row height preference */
     display: flex;
     align-items: center;
     padding: 0 1rem;
@@ -389,12 +475,15 @@ body {
 
 .data-row.winner {
     background-color: var(--accent);
-    color: #FFF !important; /* Force readable text on accent */
+    color: #FFF !important;
+    /* Force readable text on accent */
     font-size: 1.1rem;
     font-weight: bold;
     z-index: 10;
 }
-.data-row.winner .row-num, .data-row.winner .row-data {
+
+.data-row.winner .row-num,
+.data-row.winner .row-data {
     color: inherit;
 }
 
@@ -427,6 +516,7 @@ label {
     font-family: var(--font-main);
     font-size: 0.95rem;
 }
+
 .input-block:focus {
     border-color: var(--accent);
     outline: none;
@@ -450,8 +540,15 @@ label {
     color: var(--muted);
     transition: background 0.2s;
 }
-.btn-group-item:last-child { border-right: none; }
-.btn-group-item:hover { background: var(--bg); }
+
+.btn-group-item:last-child {
+    border-right: none;
+}
+
+.btn-group-item:hover {
+    background: var(--bg);
+}
+
 .btn-group-item.active {
     background: var(--text);
     color: var(--panel);
@@ -473,10 +570,19 @@ label {
 
 .btn-primary {
     background-color: var(--accent);
-    color: #FFF; /* Most accents need white text, exceptions handled in theme */
+    color: #FFF;
+    /* Most accents need white text, exceptions handled in theme */
 }
-.btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
-.btn-primary:active { transform: translateY(0); }
+
+.btn-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
 .btn-primary:disabled {
     background-color: var(--muted);
     cursor: not-allowed;
@@ -488,13 +594,17 @@ label {
     color: var(--bg);
 }
 
-.btn-danger { background-color: var(--danger); color: #FFF; }
+.btn-danger {
+    background-color: var(--danger);
+    color: #FFF;
+}
 
 .btn-outline {
     background: transparent;
     border: 1px solid var(--border);
     color: var(--text);
 }
+
 .btn-outline:hover {
     border-color: var(--accent);
     color: var(--accent);
@@ -520,8 +630,13 @@ label {
 }
 
 /* Utils */
-.hidden { display: none !important; }
-.text-xs { font-size: 0.75rem; }
+.hidden {
+    display: none !important;
+}
+
+.text-xs {
+    font-size: 0.75rem;
+}
 
 /* Celebration Overlay */
 .celebration-overlay {
@@ -538,7 +653,8 @@ label {
     flex-direction: column;
     color: #FFF;
     opacity: 0;
-    pointer-events: none; /* Passes through when opacity 0 */
+    pointer-events: none;
+    /* Passes through when opacity 0 */
     transition: opacity 0.5s ease;
 }
 

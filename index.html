@@ -49,9 +49,29 @@
 
             <!-- RNG Display (Initially Hidden via CSS) -->
             <div id="rng-display" class="rng-display-pane">
-                <div class="rng-status" id="rng-status">EN ESPERA</div>
-                <div class="rng-value" id="rng-value">???</div>
-                <div class="rng-source">VERIFICADO POR RANDOM.ORG</div>
+                <div class="quantum-card">
+                    <div class="quantum-header">
+                        <div class="quantum-logo">ANU Quantum RNG</div>
+                        <div class="quantum-status">
+                            <span class="status-dot"></span> LIVE STREAM
+                        </div>
+                    </div>
+
+                    <div class="quantum-value-container">
+                        <div class="quantum-label">Semilla Cuántica ("Raw Seed")</div>
+                        <div id="rng-raw-value"
+                            style="font-size: 0.8rem; color: #38bdf8; margin-bottom: 10px; font-family: monospace;">---
+                        </div>
+
+                        <div class="quantum-label">Valor Convertido (1-N)</div>
+                        <div id="rng-value" class="quantum-value">???</div>
+                    </div>
+
+                    <div class="quantum-source-id">
+                        Lab: Dept. of Physics, ANU<br>
+                        Canberra, Australia
+                    </div>
+                </div>
             </div>
         </div>
 

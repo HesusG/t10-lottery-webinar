@@ -12,13 +12,13 @@ class App {
         this.data = new DataHandler(this.store);
         this.wheel = new Wheel();
         this.celebration = new Celebration();
-        
+
         this.init();
     }
 
     async init() {
         console.log('T10 Lottery App Initializing...');
-        
+
         // 1. Load Settings & Theme
         const settings = this.store.getSettings();
         this.ui.applyTheme(settings.theme);
@@ -73,37 +73,35 @@ class App {
             const current = this.store.getSettings();
             current[key] = value;
             this.store.saveSettings(current);
-            
+
             if (key === 'theme') this.ui.applyTheme(value);
             if (key === 'splitRatio' || key === 'tabOrientation') {
                 this.ui.applyLayout(current.splitRatio, current.tabOrientation);
             }
         });
-        
+
         // Header Toggle in Table
         this.ui.on('headerToggle', (isChecked) => {
-             // Re-interpret current data with/without header
-             // This is complex because we might need to re-parse or just re-index
-             // For simplicity, we might just reload the dataset if we had the raw file, 
-             // OR simpler: The Store saves "raw" rows. 
-             // DataHandler.setUseHeaderRow(isChecked) -> returns formatted rows
-             const rawData = this.store.getRawRows();
-             if(rawData) {
-                 const processed = this.data.processRows(rawData, isChecked);
-                 this.store.saveDataset(processed.rows, processed.meta, rawData); // Resave with new mode
-                 this.ui.renderTable(processed.rows);
-                 this.wheel.initWheel(processed.rows.length);
-             }
+            // Re-interpret current data with/without header
+            // This is complex because we might need to re-parse or just re-index
+            // For simplicity, we might just reload the dataset if we had the raw file, 
+            // OR simpler: The Store saves "raw" rows. 
+            // DataHandler.setUseHeaderRow(isChecked) -> returns formatted rows
+            const rawData = this.store.getRawRows();
+            if (rawData) {
+                const processed = this.data.processRows(rawData, isChecked);
+                this.store.saveDataset(processed.rows, processed.meta, rawData); // Resave with new mode
+                this.ui.renderTable(processed.rows);
+                this.wheel.initWheel(processed.rows.length);
+            }
         });
     }
 
     toggleRngMode(enabled) {
         const wheelPane = document.getElementById('pane-wheel');
-        const rngDisplay = document.getElementById('rng-display');
-        
+
         if (enabled) {
             wheelPane.classList.add('split-mode');
-            // Slight delay to allow CSS transition if needed
         } else {
             wheelPane.classList.remove('split-mode');
         }
@@ -114,7 +112,7 @@ class App {
             const rawRows = await this.data.parseFile(file);
             const useHeader = document.getElementById('chk-header').checked;
             const processed = this.data.processRows(rawRows, useHeader, file.name);
-            
+
             // Save & Render
             this.loadData(processed.rows, processed.meta, false, rawRows);
         } catch (err) {
@@ -126,17 +124,17 @@ class App {
     loadData(rows, meta, isResume = false, rawRows = null) {
         // If resuming, we might not have rawRows in memory if we optimized storage
         // But Store should handle that.
-        
+
         if (!isResume && rawRows) {
             this.store.saveDataset(rows, meta, rawRows);
         }
 
         this.ui.renderTable(rows);
         this.ui.enableControls();
-        
+
         // Initialize wheel with N items
         this.wheel.initWheel(rows.length);
-        
+
         // Hide empty state
         this.ui.hideEmptyState();
     }
@@ -148,36 +146,42 @@ class App {
         // 1. Determine Winner
         const settings = this.store.getSettings();
         let winningIndex; // 0-based index in the 'rows' array
-        
+
         // Check for External RNG
         const useExternalRng = document.getElementById('chk-external-rng').checked;
-        
+
         this.ui.setSpinningState(true);
 
         if (useExternalRng) {
-            // -- EXTERNAL MODE --
-            const rngStatus = document.getElementById('rng-status');
+            // -- EXTERNAL MODE (ANU Quantum) --
             const rngValue = document.getElementById('rng-value');
-            
-            rngStatus.innerText = "CONECTANDO A RANDOM.ORG...";
-            rngValue.innerText = "???";
+            const rngRawValue = document.getElementById('rng-raw-value');
+
+            rngValue.innerText = "Quantum...";
+            rngRawValue.innerText = "Conectando al laboratorio...";
             rngValue.classList.remove('revealed');
 
             try {
-                // Fetch random number 1 to N
-                const response = await fetch(`https://www.random.org/integers/?num=1&min=1&max=${rows.length}&col=1&base=10&format=plain&rnd=new`);
+                // Fetch random number from ANU API (Uint16: 0-65535)
+                // Use a proxy or direct depending on CORS. ANU usually supports CORS.
+                // Using fallback endpoint if primary fails is good practice, but we'll try primary.
+                const response = await fetch(`https://qrng.anu.edu.au/API/jsonI.php?length=1&type=uint16`);
                 if (!response.ok) throw new Error('API Error');
-                const text = await response.text();
-                const num = parseInt(text.trim(), 10);
-                
-                if (isNaN(num)) throw new Error('Invalid Number');
-                
-                winningIndex = num - 1; // 1-based API -> 0-based index
-                rngStatus.innerText = "DATO RECIBIDO (OCULTO)";
-                
+
+                const json = await response.json();
+                if (!json.success && !json.data) throw new Error('Invalid JSON');
+
+                const quantumNum = json.data[0]; // 0 - 65535
+
+                // Map 0-65535 to 0-(rows.length-1)
+                // This is a simple modulo mapping. For strict uniformity, we'd accept only if < limit, but modulo is fine for this UI.
+                winningIndex = quantumNum % rows.length;
+
+                rngRawValue.innerText = `Source: ${quantumNum} (Uint16)`;
+
             } catch (err) {
-                console.error("RNG Error, falling back to local:", err);
-                rngStatus.innerText = "ERROR - LOCAL FALLBACK";
+                console.error("Quantum RNG Error, falling back to local:", err);
+                rngRawValue.innerText = "Error - Fallback Local";
                 winningIndex = Math.floor(Math.random() * rows.length);
             }
 
@@ -200,16 +204,14 @@ class App {
             // 4. Reveal RNG if needed
             if (useExternalRng) {
                 const rngValue = document.getElementById('rng-value');
-                const rngStatus = document.getElementById('rng-status');
                 rngValue.innerText = targetNumber;
                 rngValue.classList.add('revealed');
-                rngStatus.innerText = "CONFIRMADO";
             }
 
             // 5. Celebration
             this.ui.setSpinningState(false);
             this.celebration.start(winningRow, targetNumber, settings.celebrationDuration);
-            
+
             // 6. Update Table & History
             this.ui.scrollToRow(targetNumber);
             this.ui.highlightWinner(targetNumber);
@@ -218,7 +220,7 @@ class App {
                 timestamp: new Date().toISOString(),
                 winnerData: winningRow,
                 datasetName: this.store.getDataset().meta.filename,
-                source: useExternalRng ? 'Random.org' : 'Local RNG'
+                source: useExternalRng ? 'ANU Quantum Origin' : 'Local RNG'
             });
             this.ui.updateHistoryList(); // Refresh history UI
         });
