@@ -142,12 +142,24 @@ body {
     opacity: 0;
 }
 
+/* Vertical Orientation Support */
+.app-container.vertical-orient {
+    flex-direction: column;
+}
+
+.app-container.vertical-orient .pane {
+    width: 100% !important;
+    height: 50%;
+}
+
 .pane.wheel-pane.split-mode .rng-display-pane {
     height: 50%;
     padding: 2rem;
     /* Add padding only when active */
     border-top-width: 1px;
     border-top-color: rgba(56, 189, 248, 0.2);
+    visibility: visible;
+    opacity: 1;
 }
 
 /* Quantum Widget Card */

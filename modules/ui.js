@@ -136,7 +136,10 @@ export default class UI {
     highlightWinner(rowId) {
         document.querySelectorAll('.data-row.winner').forEach(el => el.classList.remove('winner'));
         const el = document.getElementById(`row-${rowId}`);
-        if (el) el.classList.add('winner');
+        if (el) {
+            el.classList.add('winner');
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
     }
 
     applyTheme(themeKey) {
@@ -150,18 +153,26 @@ export default class UI {
     }
 
     applyLayout(splitRatio, orientation) {
-        const [left, right] = splitRatio.split('-');
+        const app = document.getElementById('app');
         const wheelPane = document.getElementById('pane-wheel');
         const dataPane = document.getElementById('pane-data');
 
+        // Handle Orientation
         if (orientation === 'vertical') {
+            app.classList.add('vertical-orient');
             document.querySelector('.tab-controls').style.flexDirection = 'column';
+            // In vertical mode, widths should be 100% (handled by CSS now)
+            wheelPane.style.width = '';
+            dataPane.style.width = '';
         } else {
+            app.classList.remove('vertical-orient');
             document.querySelector('.tab-controls').style.flexDirection = 'row';
-        }
 
-        wheelPane.style.width = `${left}%`;
-        dataPane.style.width = `${right}%`;
+            // Handle Horizontal Split Ratio
+            const [left, right] = splitRatio.split('-');
+            wheelPane.style.width = `${left}%`;
+            dataPane.style.width = `${right}%`;
+        }
 
         document.querySelectorAll('.btn-group-item').forEach(b => b.classList.remove('active'));
 

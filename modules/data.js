@@ -10,18 +10,27 @@ export default class DataHandler {
             reader.onload = (e) => {
                 const data = new Uint8Array(e.target.result);
                 try {
+                    // Start with UTF-8 (65001). 
+                    // If we wanted to be fancier, we could detect BOM, but XLSX usually handles BOM.
                     const workbook = XLSX.read(data, { type: 'array', codepage: 65001 });
+
+                    if (!workbook.SheetNames.length) {
+                        throw new Error("El archivo no contiene hojas visibles.");
+                    }
+
                     const firstSheetName = workbook.SheetNames[0];
                     const worksheet = workbook.Sheets[firstSheetName];
+
                     // Get raw array of arrays
-                    const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                    const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
                     resolve(rows);
                 } catch (err) {
-                    reject(err);
+                    console.error("XLSX Parse Error:", err);
+                    reject(new Error("No se pudo leer el archivo. Asegúrate de que sea un CSV o Excel válido."));
                 }
             };
 
-            reader.onerror = reject;
+            reader.onerror = () => reject(new Error("Error de lectura del archivo."));
 
             reader.readAsArrayBuffer(file);
         });
