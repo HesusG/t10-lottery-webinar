@@ -138,6 +138,8 @@ body {
     overflow: hidden;
     transition: height 0.3s ease, padding 0.3s ease;
     border-top: 0 solid var(--border);
+    visibility: hidden;
+    opacity: 0;
 }
 
 .pane.wheel-pane.split-mode .rng-display-pane {
