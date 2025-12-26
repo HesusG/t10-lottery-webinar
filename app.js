@@ -162,22 +162,20 @@ class App {
             rngValue.classList.remove('revealed');
 
             try {
-                // Fetch random number from ANU API (Uint16: 0-65535)
-                // Use a proxy or direct depending on CORS. ANU usually supports CORS.
-                // Using fallback endpoint if primary fails is good practice, but we'll try primary.
-                const response = await fetch(`https://qrng.anu.edu.au/API/jsonI.php?length=1&type=uint16`);
+                // Fetch random number from Random.org (Atmospheric Noise)
+                // Returns plain text string like "12345\n"
+                const response = await fetch(`https://www.random.org/integers/?num=1&min=0&max=65535&col=1&base=10&format=plain&rnd=new`);
                 if (!response.ok) throw new Error('API Error');
 
-                const json = await response.json();
-                if (!json.success && !json.data) throw new Error('Invalid JSON');
+                const text = await response.text();
+                const quantumNum = parseInt(text.trim(), 10);
 
-                const quantumNum = json.data[0]; // 0 - 65535
+                if (isNaN(quantumNum)) throw new Error('Invalid Response');
 
                 // Map 0-65535 to 0-(rows.length-1)
-                // This is a simple modulo mapping. For strict uniformity, we'd accept only if < limit, but modulo is fine for this UI.
                 winningIndex = quantumNum % rows.length;
 
-                rngRawValue.innerText = `Source: ${quantumNum} (Uint16)`;
+                rngRawValue.innerText = `Atmospheric data: ${quantumNum}`;
 
             } catch (err) {
                 console.error("Quantum RNG Error, falling back to local:", err);
